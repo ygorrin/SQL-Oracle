@@ -45,3 +45,72 @@ select * from mascota;
 delete from mascota where codigo = '9';
 select * from mascota;
 
+--****** Scrip que crea las bases de datos iniciales**********
+
+CREATE TABLE CLINICA
+  (
+    patente   VARCHAR2 (50) NOT NULL ,
+    direccion VARCHAR2 (50) NOT NULL ,
+    telefono  INTEGER NOT NULL
+  ) ;
+ALTER TABLE CLINICA ADD CONSTRAINT CLINICA_PK PRIMARY KEY ( patente ) ;
+
+
+CREATE TABLE DUENO
+  (
+    rut       VARCHAR2 (12) NOT NULL ,
+    nombre    VARCHAR2 (50) NOT NULL ,
+    apellido  VARCHAR2 (50) NOT NULL ,
+    telefono  INTEGER NOT NULL ,
+    direccion VARCHAR2 (100) NOT NULL
+  ) ;
+ALTER TABLE DUENO ADD CONSTRAINT DUENO_PK PRIMARY KEY ( rut ) ;
+
+
+CREATE TABLE MASCOTA
+  (
+    codigo          VARCHAR2 (12) NOT NULL ,
+    nombre          VARCHAR2 (50) NOT NULL ,
+    tipo_mascota    VARCHAR2 (50) NOT NULL ,
+    peso            INTEGER NOT NULL ,
+    edad            INTEGER NOT NULL ,
+    sexo            VARCHAR2 (50) NOT NULL ,
+    DUENO_rut       VARCHAR2 (12) NOT NULL ,
+    VETERINARIO_rut VARCHAR2 (12) NOT NULL
+  ) ;
+ALTER TABLE MASCOTA ADD CONSTRAINT MASCOTA_PK PRIMARY KEY ( codigo ) ;
+
+CREATE TABLE VETERINARIO
+  (
+    rut             VARCHAR2 (12) NOT NULL ,
+    nombre          VARCHAR2 (50) NOT NULL ,
+    especialidad    VARCHAR2 (50) NOT NULL ,
+    apellido        VARCHAR2 (50) NOT NULL ,
+    CLINICA_patente VARCHAR2 (50) NOT NULL
+  ) ;
+ALTER TABLE VETERINARIO ADD CONSTRAINT VETERINARIO_PK PRIMARY KEY ( rut ) ;
+
+ALTER TABLE MASCOTA ADD CONSTRAINT MASCOTA_DUENO_FK FOREIGN KEY ( DUENO_rut ) REFERENCES DUENO ( rut ) ;
+
+ALTER TABLE MASCOTA ADD CONSTRAINT MASCOTA_VETERINARIO_FK FOREIGN KEY ( VETERINARIO_rut ) REFERENCES VETERINARIO ( rut ) ;
+
+ALTER TABLE VETERINARIO ADD CONSTRAINT VETERINARIO_CLINICA_FK FOREIGN KEY ( CLINICA_patente ) REFERENCES CLINICA ( patente ) ;
+
+
+-- Insertando filas
+
+insert into dueno values ('111111111-1', 'Carolina', 'Torres', 12345678, 'Av Brasil 147');
+insert into dueno values ('222222222-2', 'Maria', 'Fuentes', 23242528, 'Av Providencia 4580');
+insert into dueno values ('333333333-3', 'Juana', 'Cornejo', 24681012, 'Av Apoquindo 6207');
+
+insert into clinica values ('AB1001', 'Avenida Providencia 1205', 222222222);
+insert into clinica values ('AB1002', 'Avenida Manuel Montt 756', 333333333);
+insert into clinica values ('AB1003', 'Avenida Irarrazabal 11550', 444444444);
+
+insert into VETERINARIO values ('12345678-5', 'Pedro', 'Cirujano', 'Diaz', 'AB1001');
+insert into VETERINARIO values ('12345678-6', 'Juan', 'Cirujano', 'Fuentes', 'AB1002');
+insert into VETERINARIO values ('12345678-7', 'Diego', 'Cirujano', 'Hernandez', 'AB1003');
+
+insert into MASCOTA values ('ABC123', 'Barnie', 'Dinosaurio', 200, 120, 'Indeterminado', '111111111-1', '12345678-5');
+insert into MASCOTA values ('ABC124', 'Juanito', 'Gato', 5, 10, 'Masculino', '222222222-2', '12345678-6');
+insert into MASCOTA values ('ABC125', 'Ruffo', 'Perro', 20, 5, 'Masculino', '333333333-3', '12345678-7');
